@@ -1,0 +1,48 @@
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from database import get_db
+from models.cliente import Cliente
+from models.telefone import Telefone
+from models.endereco import Endereco
+from schemas.cliente import ClienteCreate, ClienteUpdate, ClienteOut
+from typing import List
+
+router = APIRouter(prefix="/clientes", tags=["Clientes"])
+
+@router.get("/", response_model=List[ClienteOut])
+def listar(db: Session = Depends(get_db)):
+    return db.query(Cliente).all()
+
+@router.get("/{id}", response_model=ClienteOut)
+def buscar(id: int, db: Session = Depends(get_db)):
+    cliente = db.query(Cliente).filter(Cliente.id == id).first()
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+    return cliente
+
+@router.post("/", response_model=ClienteOut, status_code=201)
+def criar(data: ClienteCreate, db: Session = Depends(get_db)):
+    cliente = Cliente(**data.model_dump())
+    db.add(cliente)
+    db.commit()
+    db.refresh(cliente)
+    return cliente
+
+@router.put("/{id}", response_model=ClienteOut)
+def atualizar(id: int, data: ClienteUpdate, db: Session = Depends(get_db)):
+    cliente = db.query(Cliente).filter(Cliente.id == id).first()
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+    for campo, valor in data.model_dump().items():
+        setattr(cliente, campo, valor)
+    db.commit()
+    db.refresh(cliente)
+    return cliente
+
+@router.delete("/{id}", status_code=204)
+def deletar(id: int, db: Session = Depends(get_db)):
+    cliente = db.query(Cliente).filter(Cliente.id == id).first()
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+    db.delete(cliente)
+    db.commit()

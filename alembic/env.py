@@ -20,7 +20,7 @@ load_dotenv(
 
 config.set_main_option(
     "sqlalchemy.url",
-    os.getenv("DATABASE_URL").replace("postgresql://", "postgresql+psycopg2://")
+    (os.getenv("DATABASE_URL") or "").replace("postgresql://", "postgresql+psycopg2://")
 )
 
 if config.config_file_name is not None:
@@ -36,7 +36,7 @@ def run_migrations_offline():
 
 def run_migrations_online():
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
+        config.get_section(config.config_ini_section) or {},
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
