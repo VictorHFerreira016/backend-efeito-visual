@@ -4,7 +4,7 @@ from database import Base, engine
 from routers import servicos, produtos
 
 app = FastAPI(
-    title = "salao_de_beleza"
+    title = "efeito_visual"
 )
 
 app.add_middleware(
@@ -16,10 +16,3 @@ app.add_middleware(
 
 app.include_router(servicos.router)
 app.include_router(produtos.router)
-
-'''if __name__ == "__main__":
-    uvicorn.run(
-        app,
-        host = "0.0.0.0",
-        port = 5000
-    )'''
