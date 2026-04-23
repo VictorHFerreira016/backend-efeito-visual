@@ -1,6 +1,8 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import date
+from schemas.endereco import EnderecoCreate
+from schemas.telefone import TelefoneCreate
 
 class ClienteBase(BaseModel):
     nome: str
@@ -10,13 +12,17 @@ class ClienteBase(BaseModel):
     sexo: Optional[str] = None
 
 class ClienteCreate(ClienteBase):
-    pass
+    enderecos: List[EnderecoCreate] = []
+    telefones: List[TelefoneCreate] = []
 
 class ClienteUpdate(ClienteBase):
-    pass
+    enderecos: List[EnderecoCreate] = []
+    telefones: List[TelefoneCreate] = []
 
 class ClienteOut(ClienteBase):
     id: int
+    enderecos: List[EnderecoCreate] = []
+    telefones: List[TelefoneCreate] = []
 
     class Config:
         from_attributes = True

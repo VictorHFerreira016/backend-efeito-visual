@@ -9,6 +9,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from database import Base
 from models.produto import Produto
 from models.servico import Servico
+from models.login import Login
 
 config = context.config
 

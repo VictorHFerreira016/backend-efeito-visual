@@ -10,8 +10,8 @@ from typing import List
 router = APIRouter(prefix="/vendas", tags=["Vendas"])
 
 @router.get("/", response_model=List[VendaOut])
-def listar(db: Session = Depends(get_db)):
-    return db.query(Venda).all()
+def listar(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
+    return db.query(Venda).offset(skip).limit(limit).all()
 
 @router.get("/{id}", response_model=VendaOut)
 def buscar(id: int, db: Session = Depends(get_db)):

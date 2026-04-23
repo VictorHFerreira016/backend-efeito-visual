@@ -11,8 +11,8 @@ router = APIRouter(
 )
 
 @router.get("/", response_model=List[ProdutoOut])
-def listar(db: Session = Depends(get_db)):
-    return db.query(Produto).all()
+def listar(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
+    return db.query(Produto).offset(skip).limit(limit).all()
 
 @router.post("/", response_model=ProdutoOut, status_code=201)
 def criar(data: ProdutoCreate, db: Session = Depends(get_db)):

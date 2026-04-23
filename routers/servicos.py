@@ -11,8 +11,8 @@ router = APIRouter(
 )
 
 @router.get("/", response_model=List[ServicoOut])
-def listar(db: Session = Depends(get_db)):
-    return db.query(Servico).all()
+def listar(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
+    return db.query(Servico).offset(skip).limit(limit).all()
 
 @router.post("/", response_model=ServicoOut, status_code=201)
 def criar(data: ServicoCreate, db: Session = Depends(get_db)):

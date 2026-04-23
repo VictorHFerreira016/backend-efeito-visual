@@ -10,8 +10,8 @@ from typing import List
 router = APIRouter(prefix="/clientes", tags=["Clientes"])
 
 @router.get("/", response_model=List[ClienteOut])
-def listar(db: Session = Depends(get_db)):
-    return db.query(Cliente).all()
+def listar(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
+    return db.query(Cliente).offset(skip).limit(limit).all()
 
 @router.get("/{id}", response_model=ClienteOut)
 def buscar(id: int, db: Session = Depends(get_db)):
@@ -22,7 +22,11 @@ def buscar(id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=ClienteOut, status_code=201)
 def criar(data: ClienteCreate, db: Session = Depends(get_db)):
-    cliente = Cliente(**data.model_dump())
+    cliente = Cliente(
+        **data.model_dump(), 
+        enderecos=[Endereco(**e.dict()) for e in data.enderecos], 
+        telefones=[Telefone(**t.dict()) for t in data.telefones]
+    )
     db.add(cliente)
     db.commit()
     db.refresh(cliente)
