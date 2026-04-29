@@ -16,7 +16,7 @@ def listar(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
 @router.get("/{id}", response_model=VendaOut)
 def buscar(id: int, db: Session = Depends(get_db)):
     venda = db.query(Venda).filter(Venda.id == id).first()
-    if not venda:
+    if venda is None:
         raise HTTPException(status_code=404, detail="Venda não encontrada")
     return venda
 
@@ -27,11 +27,17 @@ def criar(data: VendaCreate, db: Session = Depends(get_db)):
 
     for item in data.itens:
         produto = db.query(Produto).filter(Produto.id == item.produto_id).first()
-        if not produto:
+        if produto is None:
             raise HTTPException(status_code=404, detail=f"Produto {item.produto_id} não encontrado")
+        
+        estoque_atual = produto.quantidade
+        if item.quantidade > estoque_atual:
+            raise HTTPException(status_code=400, detail=f"Quantidade solicitada para produto {item.produto_id} excede o estoque disponível")
+        
+        produto.quantidade = estoque_atual - item.quantidade
         valor_total += item.quantidade * item.preco_unitario
         itens_obj.append(ItemVenda(**item.model_dump()))
-
+        
     venda = Venda(
         cliente_id=data.cliente_id,
         forma_pagamento=data.forma_pagamento,
@@ -47,7 +53,7 @@ def criar(data: VendaCreate, db: Session = Depends(get_db)):
 @router.delete("/{id}", status_code=204)
 def deletar(id: int, db: Session = Depends(get_db)):
     venda = db.query(Venda).filter(Venda.id == id).first()
-    if not venda:
+    if venda is None:
         raise HTTPException(status_code=404, detail="Venda não encontrada")
     db.delete(venda)
     db.commit()

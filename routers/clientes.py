@@ -23,9 +23,9 @@ def buscar(id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=ClienteOut, status_code=201)
 def criar(data: ClienteCreate, db: Session = Depends(get_db)):
     cliente = Cliente(
-        **data.model_dump(), 
-        enderecos=[Endereco(**e.dict()) for e in data.enderecos], 
-        telefones=[Telefone(**t.dict()) for t in data.telefones]
+        **data.model_dump(exclude={"enderecos", "telefones"}), 
+        enderecos=[Endereco(**e.model_dump()) for e in data.enderecos], 
+        telefones=[Telefone(**t.model_dump()) for t in data.telefones]
     )
     db.add(cliente)
     db.commit()
@@ -37,7 +37,7 @@ def atualizar(id: int, data: ClienteUpdate, db: Session = Depends(get_db)):
     cliente = db.query(Cliente).filter(Cliente.id == id).first()
     if not cliente:
         raise HTTPException(status_code=404, detail="Cliente não encontrado")
-    for campo, valor in data.model_dump().items():
+    for campo, valor in data.model_dump(exclude={"enderecos", "telefones"}).items():
         setattr(cliente, campo, valor)
     db.commit()
     db.refresh(cliente)

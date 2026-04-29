@@ -14,6 +14,13 @@ router = APIRouter(
 def listar(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
     return db.query(Servico).offset(skip).limit(limit).all()
 
+@router.get("/{id}", response_model=ServicoOut)
+def buscar(id: int, db: Session = Depends(get_db)):
+    servico = db.query(Servico).filter(Servico.id == id).first()
+    if not servico:
+        raise HTTPException(status_code=404, detail="Serviço não encontrado")
+    return servico
+
 @router.post("/", response_model=ServicoOut, status_code=201)
 def criar(data: ServicoCreate, db: Session = Depends(get_db)):
     servico = Servico(**data.model_dump())

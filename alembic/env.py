@@ -10,6 +10,7 @@ from database import Base
 from models.produto import Produto
 from models.servico import Servico
 from models.login import Login
+from models import Cliente, Telefone, Endereco, Venda, ItemVenda, Produto, Servico
 
 config = context.config
 

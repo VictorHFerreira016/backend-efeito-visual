@@ -14,6 +14,13 @@ router = APIRouter(
 def listar(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
     return db.query(Produto).offset(skip).limit(limit).all()
 
+@router.get("/{id}", response_model=ProdutoOut)
+def buscar(id: int, db: Session = Depends(get_db)):
+    produto = db.query(Produto).filter(Produto.id == id).first()
+    if not produto:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+    return produto
+
 @router.post("/", response_model=ProdutoOut, status_code=201)
 def criar(data: ProdutoCreate, db: Session = Depends(get_db)):
     produto = Produto(**data.model_dump())

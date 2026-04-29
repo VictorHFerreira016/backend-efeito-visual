@@ -5,12 +5,19 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models.login import Login
 from schemas.login import LoginCreate, LoginUpdate, LoginOut
-from auth import hash_senha, verificar_senha, criar_token
+from auth import hash_senha, verificar_senha, criar_token, get_usuario_atual
 
 router = APIRouter(prefix="/login", tags=["Login"])
 
+@router.get("/me", response_model=LoginOut)
+def me(email: str = Depends(get_usuario_atual), db: Session = Depends(get_db)):
+    login = db.query(Login).filter(Login.email == email).first()
+    if not login:
+        raise HTTPException(status_code=404, detail="Login não encontrado")
+    return login
+
 @router.post("/register", response_model=LoginOut, status_code=201)
-def registrar(data: LoginCreate, db: Session = Depends(get_db)):
+def registrar(data: LoginCreate = Depends(get_usuario_atual), db: Session = Depends(get_db)):
     existente = db.query(Login).filter(Login.email == data.email).first()
     if existente:
         raise HTTPException(status_code=400, detail="Email já cadastrado")

@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import Optional
 
 class TelefoneBase(BaseModel):
-    cliente_id: int
     numero: str
     tipo: Optional[str] = None
 

@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import Optional
 
 class EnderecoBase(BaseModel):
-    cliente_id: int
     logradouro: Optional[str] = None
     numero: Optional[str] = None
     complemento: Optional[str] = None
