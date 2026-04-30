@@ -4,6 +4,7 @@ from database import get_db
 from models.produto import Produto
 from schemas.produto import ProdutoCreate, ProdutoUpdate, ProdutoOut
 from typing import List
+from auth import get_usuario_atual
 
 router = APIRouter(
     prefix="/produtos", 
@@ -11,18 +12,31 @@ router = APIRouter(
 )
 
 @router.get("/", response_model=List[ProdutoOut])
-def listar(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
+def listar(
+        skip: int = 0, 
+        limit: int = 20, 
+        db: Session = Depends(get_db), 
+        _: str = Depends(get_usuario_atual)
+    ):
     return db.query(Produto).offset(skip).limit(limit).all()
 
 @router.get("/{id}", response_model=ProdutoOut)
-def buscar(id: int, db: Session = Depends(get_db)):
+def buscar(
+        id: int, 
+        db: Session = Depends(get_db), 
+        _: str = Depends(get_usuario_atual)
+    ):
     produto = db.query(Produto).filter(Produto.id == id).first()
     if not produto:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
     return produto
 
 @router.post("/", response_model=ProdutoOut, status_code=201)
-def criar(data: ProdutoCreate, db: Session = Depends(get_db)):
+def criar(
+        data: ProdutoCreate, 
+        db: Session = Depends(get_db), 
+        _: str = Depends(get_usuario_atual)
+    ):
     produto = Produto(**data.model_dump())
     db.add(produto)
     db.commit()
@@ -30,7 +44,12 @@ def criar(data: ProdutoCreate, db: Session = Depends(get_db)):
     return produto
 
 @router.put("/{id}", response_model=ProdutoOut)
-def atualizar(id: int, data: ProdutoUpdate, db: Session = Depends(get_db)):
+def atualizar(
+        id: int, 
+        data: ProdutoUpdate, 
+        db: Session = Depends(get_db), 
+        _: str = Depends(get_usuario_atual)
+    ):
     produto = db.query(Produto).filter(Produto.id == id).first()
     if not produto:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
@@ -41,7 +60,11 @@ def atualizar(id: int, data: ProdutoUpdate, db: Session = Depends(get_db)):
     return produto
 
 @router.delete("/{id}", status_code=204)
-def deletar(id: int, db: Session = Depends(get_db)):
+def deletar(
+        id: int, 
+        db: Session = Depends(get_db), 
+        _: str = Depends(get_usuario_atual)
+    ):
     produto = db.query(Produto).filter(Produto.id == id).first()
     if not produto:
         raise HTTPException(status_code=404, detail="Produto não encontrado")

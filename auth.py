@@ -12,8 +12,13 @@ if not SECRET_KEY:
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
+pwd_context = CryptContext(
+    schemes=["bcrypt"], 
+    deprecated="auto"
+)
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl="/login/token"
+)
 
 def hash_senha(senha: str) -> str:
     return pwd_context.hash(senha)
@@ -24,11 +29,11 @@ def verificar_senha(senha: str, hash: str) -> bool:
 def criar_token(data: dict) -> str:
     payload = data.copy()
     payload["exp"] = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(payload, str(SECRET_KEY), algorithm=ALGORITHM)
 
 def get_usuario_atual(token: str = Depends(oauth2_scheme)):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, str(SECRET_KEY), algorithms=[ALGORITHM])
         email: str = str(payload.get("sub"))
         if email is None:
             raise HTTPException(status_code=401, detail="Token inválido")

@@ -6,22 +6,23 @@ from models.item_venda import ItemVenda
 from models.produto import Produto
 from schemas.venda import VendaCreate, VendaOut
 from typing import List
+from auth import get_usuario_atual
 
 router = APIRouter(prefix="/vendas", tags=["Vendas"])
 
 @router.get("/", response_model=List[VendaOut])
-def listar(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
+def listar(skip: int = 0, limit: int = 20, db: Session = Depends(get_db), _: str = Depends(get_usuario_atual)):
     return db.query(Venda).offset(skip).limit(limit).all()
 
 @router.get("/{id}", response_model=VendaOut)
-def buscar(id: int, db: Session = Depends(get_db)):
+def buscar(id: int, db: Session = Depends(get_db), _: str = Depends(get_usuario_atual)):
     venda = db.query(Venda).filter(Venda.id == id).first()
     if venda is None:
         raise HTTPException(status_code=404, detail="Venda não encontrada")
     return venda
 
 @router.post("/", response_model=VendaOut, status_code=201)
-def criar(data: VendaCreate, db: Session = Depends(get_db)):
+def criar(data: VendaCreate, db: Session = Depends(get_db), _: str = Depends(get_usuario_atual)):
     valor_total = 0.0
     itens_obj = []
 
@@ -51,7 +52,7 @@ def criar(data: VendaCreate, db: Session = Depends(get_db)):
     return venda
 
 @router.delete("/{id}", status_code=204)
-def deletar(id: int, db: Session = Depends(get_db)):
+def deletar(id: int, db: Session = Depends(get_db), _: str = Depends(get_usuario_atual)):
     venda = db.query(Venda).filter(Venda.id == id).first()
     if venda is None:
         raise HTTPException(status_code=404, detail="Venda não encontrada")
