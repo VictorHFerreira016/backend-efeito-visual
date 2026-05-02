@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Date
 from database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -11,3 +11,5 @@ class Produto(Base):
     quantidade = Column(Integer, default=0)
     preco = Column(Float, nullable=False)
     fornecedor = Column(String, nullable=True)
+    quantidade_minima = Column(Integer, default=0, nullable=True)
+    data_validade = Column(Date, nullable=True)

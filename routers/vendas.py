@@ -4,6 +4,7 @@ from database import get_db
 from models.venda import Venda
 from models.item_venda import ItemVenda
 from models.produto import Produto
+from models.servico import Servico
 from schemas.venda import VendaCreate, VendaOut
 from typing import List
 from auth import get_usuario_atual
@@ -27,18 +28,23 @@ def criar(data: VendaCreate, db: Session = Depends(get_db), _: str = Depends(get
     itens_obj = []
 
     for item in data.itens:
-        produto = db.query(Produto).filter(Produto.id == item.produto_id).first()
-        if produto is None:
-            raise HTTPException(status_code=404, detail=f"Produto {item.produto_id} não encontrado")
-        
-        estoque_atual = produto.quantidade
-        if item.quantidade > estoque_atual:
-            raise HTTPException(status_code=400, detail=f"Quantidade solicitada para produto {item.produto_id} excede o estoque disponível")
-        
-        produto.quantidade = estoque_atual - item.quantidade
+        if item.produto_id is not None:
+            produto = db.query(Produto).filter(Produto.id == item.produto_id).first()
+            if produto is None:
+                raise HTTPException(status_code=404, detail=f"Produto {item.produto_id} não encontrado")
+            if item.quantidade > produto.quantidade:
+                raise HTTPException(status_code=400, detail=f"Quantidade solicitada para produto {item.produto_id} excede o estoque disponível")
+            produto.quantidade -= item.quantidade
+
+        else:  # servico_id
+            servico = db.query(Servico).filter(Servico.id == item.servico_id).first()
+            if servico is None:
+                raise HTTPException(status_code=404, detail=f"Serviço {item.servico_id} não encontrado")
+            # serviços não têm estoque, apenas validamos que existe
+
         valor_total += item.quantidade * item.preco_unitario
         itens_obj.append(ItemVenda(**item.model_dump()))
-        
+
     venda = Venda(
         cliente_id=data.cliente_id,
         forma_pagamento=data.forma_pagamento,

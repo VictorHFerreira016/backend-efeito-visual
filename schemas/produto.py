@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from datetime import date
 
 class ProdutoBase(BaseModel):
     nome: str
@@ -7,6 +8,8 @@ class ProdutoBase(BaseModel):
     quantidade: int = 0
     preco: float
     fornecedor: Optional[str] = None
+    quantidade_minima: Optional[int] = 0
+    data_validade: Optional[date] = None
 
 class ProdutoCreate(ProdutoBase):
     pass
