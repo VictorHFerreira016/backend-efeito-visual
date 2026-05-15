@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from database import Base, engine
-from routers import servicos, produtos, clientes, vendas, login
+from routers import servicos, produtos, clientes, vendas, login, fornecedores, fabricantes, categorias, estoque
 
 logger = logging.getLogger(__name__)
 
@@ -45,3 +45,7 @@ app.include_router(servicos.router)
 app.include_router(clientes.router)
 app.include_router(vendas.router)
 app.include_router(login.router)
+app.include_router(fornecedores.router)
+app.include_router(fabricantes.router)
+app.include_router(categorias.router)
+app.include_router(estoque.router)

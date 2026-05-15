@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from uuid import UUID
 
 class LoginBase(BaseModel):
     email: str
@@ -11,7 +12,7 @@ class LoginUpdate(LoginBase):
     pass
 
 class LoginOut(BaseModel):
-    id: int
+    id: UUID
     email: str
 
     class Config:

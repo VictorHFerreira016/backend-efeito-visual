@@ -5,3 +5,7 @@ from .telefone import Telefone
 from .endereco import Endereco
 from .venda import Venda
 from .item_venda import ItemVenda
+from .estoque import Estoque
+from .categoria import Categoria
+from .fabricante import Fabricante
+from .fornecedor import Fornecedor

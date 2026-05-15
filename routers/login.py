@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from database import get_db
+from uuid import UUID
 from models.login import Login
 from schemas.login import LoginCreate, LoginUpdate, LoginOut
 from auth import hash_senha, verificar_senha, criar_token, get_usuario_atual
@@ -45,7 +46,7 @@ def autenticar(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     }
 
 @router.put("/{id}", response_model=LoginOut)
-def atualizar(id: int, data: LoginUpdate, db: Session = Depends(get_db)):
+def atualizar(id: UUID, data: LoginUpdate, db: Session = Depends(get_db)):
     login = db.query(Login).filter(Login.id == id).first()
     if not login:
         raise HTTPException(status_code=404, detail="Login não encontrado")
@@ -56,7 +57,7 @@ def atualizar(id: int, data: LoginUpdate, db: Session = Depends(get_db)):
     return login
 
 @router.delete("/{id}", status_code=204)
-def deletar(id: int, db: Session = Depends(get_db)):
+def deletar(id: UUID, db: Session = Depends(get_db)):
     login = db.query(Login).filter(Login.id == id).first()
     if not login:
         raise HTTPException(status_code=404, detail="Login não encontrado")

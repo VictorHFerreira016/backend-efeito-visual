@@ -4,6 +4,7 @@ from database import get_db
 from models.servico import Servico
 from schemas.servico import ServicoCreate, ServicoUpdate, ServicoOut
 from typing import List
+from uuid import UUID
 from auth import get_usuario_atual
 
 router = APIRouter(
@@ -16,7 +17,7 @@ def listar(skip: int = 0, limit: int = 20, db: Session = Depends(get_db), _: str
     return db.query(Servico).offset(skip).limit(limit).all()
 
 @router.get("/{id}", response_model=ServicoOut)
-def buscar(id: int, db: Session = Depends(get_db), _: str = Depends(get_usuario_atual)):
+def buscar(id: UUID, db: Session = Depends(get_db), _: str = Depends(get_usuario_atual)):
     servico = db.query(Servico).filter(Servico.id == id).first()
     if not servico:
         raise HTTPException(status_code=404, detail="Serviço não encontrado")
@@ -31,7 +32,7 @@ def criar(data: ServicoCreate, db: Session = Depends(get_db), _: str = Depends(g
     return servico
 
 @router.put("/{id}", response_model=ServicoOut)
-def atualizar(id: int, data: ServicoUpdate, db: Session = Depends(get_db), _: str = Depends(get_usuario_atual)):
+def atualizar(id: UUID, data: ServicoUpdate, db: Session = Depends(get_db), _: str = Depends(get_usuario_atual)):
     servico = db.query(Servico).filter(Servico.id == id).first()
     if not servico:
         raise HTTPException(status_code=404, detail="Serviço não encontrado")
@@ -42,7 +43,7 @@ def atualizar(id: int, data: ServicoUpdate, db: Session = Depends(get_db), _: st
     return servico
 
 @router.delete("/{id}", status_code=204)
-def deletar(id: int, db: Session = Depends(get_db), _: str = Depends(get_usuario_atual)):
+def deletar(id: UUID, db: Session = Depends(get_db), _: str = Depends(get_usuario_atual)):
     servico = db.query(Servico).filter(Servico.id == id).first()
     if not servico:
         raise HTTPException(status_code=404, detail="Serviço não encontrado")

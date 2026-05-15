@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from uuid import UUID
 
 class EnderecoBase(BaseModel):
     logradouro: Optional[str] = None
@@ -18,7 +19,7 @@ class EnderecoUpdate(EnderecoBase):
     pass
 
 class EnderecoOut(EnderecoBase):
-    id: int
+    id: UUID
 
     class Config:
         from_attributes = True

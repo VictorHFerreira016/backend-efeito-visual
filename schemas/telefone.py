@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from uuid import UUID
 
 class TelefoneBase(BaseModel):
     numero: str
@@ -12,7 +13,7 @@ class TelefoneUpdate(TelefoneBase):
     pass
 
 class TelefoneOut(TelefoneBase):
-    id: int
+    id: UUID
 
     class Config:
         from_attributes = True

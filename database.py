@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 import os
 
-load_dotenv(encoding = "latin_1")
+load_dotenv(encoding = "utf-8")
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./salao.db")
 

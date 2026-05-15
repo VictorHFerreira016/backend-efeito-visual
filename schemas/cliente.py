@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional, List
+from uuid import UUID
 from datetime import date
 from schemas.endereco import EnderecoCreate, EnderecoOut
 from schemas.telefone import TelefoneCreate, TelefoneOut
@@ -20,7 +21,7 @@ class ClienteUpdate(ClienteBase):
     telefones: List[TelefoneCreate] = []
 
 class ClienteOut(ClienteBase):
-    id: int
+    id: UUID
     enderecos: List[EnderecoOut] = []
     telefones: List[TelefoneOut] = []
 
