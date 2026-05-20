@@ -7,3 +7,6 @@ from .categoria import CategoriaCreate, CategoriaOut, CategoriaUpdate
 from .fabricante import FabricanteCreate, FabricanteOut, FabricanteUpdate
 from .fornecedor import FornecedorCreate, FornecedorOut, FornecedorUpdate
 from .estoque import EstoqueCreate, EstoqueOut, EstoqueUpdate
+from .endereco import EnderecoCreate, EnderecoOut, EnderecoUpdate
+from .telefone import TelefoneCreate, TelefoneOut, TelefoneUpdate
+from .item_venda import ItemVendaCreate, ItemVendaOut, ItemVendaUpdate

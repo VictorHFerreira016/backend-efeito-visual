@@ -20,3 +20,5 @@ treinamento/.env
 .vscode/
 
 notebooks
+
+teste_apis.py
